@@ -1,6 +1,6 @@
 # pubsub_consumer
-Payments entries are posted in a topic called `payment-audit-log`.
-This Cloud Function with push subscription validates the messages, identity poison and invalid messages, and store them in GCS buckets for further processing with analytics tools.
+This Cloud Function receives push messages from the PubSub topic `payment-audit-log`.
+It validates the message format, schema, then store valid messages in a GCS bucket for further processing with analytics tools.
 
 ## Deploy
 ```shell
