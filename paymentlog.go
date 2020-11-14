@@ -65,6 +65,7 @@ func (msg *PubSubMessage) validate() error {
 	return nil
 }
 
+// store message in GCS
 func (msg *PubSubMessage) save() error {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
