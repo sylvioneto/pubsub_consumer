@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	"os"
 
+	"cloud.google.com/go/storage"
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -35,7 +36,12 @@ var schemaData string = `
 func ProcessLog(ctx context.Context, m PubSubMessage) error {
 	err := m.validate()
 	if err != nil {
-		log.Printf("messageId 1731286397516536: %s", err)
+		println("messageId 1731286397516536: %s", err)
+		return err
+	}
+	err = m.save()
+	if err != nil {
+		println("messageId 1731286397516536: %s", err)
 		return err
 	}
 	return nil
@@ -60,13 +66,23 @@ func (msg *PubSubMessage) validate() error {
 	return nil
 }
 
-/*
-func (msg *PubSubMessage) unmarshall() (PaymentMessage, error) {
-	var pMsg PaymentMessage
-	err := json.Unmarshal(msg.Data, &pMsg)
+func (msg *PubSubMessage) save() error {
+	bucketName := os.Getenv("BUCKET")
+
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
 	if err != nil {
-		return pMsg, fmt.Errorf("Unmarshal error %s", err)
+		return err
 	}
-	return pMsg, nil
+
+	obj := client.Bucket(bucketName).Object(msg.ID)
+	wc := obj.NewWriter(ctx)
+	if _, err := wc.Write(msg.Data); err != nil {
+		return err
+	}
+	if err := wc.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }
-*/

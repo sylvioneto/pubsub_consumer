@@ -35,19 +35,3 @@ func TestValidate_withValidMsg(t *testing.T) {
 		t.Errorf("Got err=%s; want no errors", err)
 	}
 }
-
-func TestProcessLog_withValidMsg(t *testing.T) {
-	msg := PubSubMessage{ID: "good", Data: []byte(validMessage)}
-	err := ProcessLog(nil, msg)
-	if err != nil {
-		t.Errorf("Got err=%s; want no errors", err)
-	}
-}
-
-func TestProcessLog_withInvalidMsg(t *testing.T) {
-	msg := PubSubMessage{ID: "bad", Data: []byte(invalidMessage)}
-	err := ProcessLog(nil, msg)
-	if err == nil {
-		t.Errorf("Got err=%s; want errors", err)
-	}
-}
