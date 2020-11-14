@@ -20,10 +20,21 @@ type PaymentMessage struct {
 	Name string `json:"name"`
 }
 
-var schemaData = map[string]interface{}{
-	"type":     "object",
-	"required": []string{"fromCustomer", "toCustomer"},
+var schemaData string = `
+{	
+	"$schema": "http://json-schema.org/draft/2019-09/schema#",
+	"type": "object",
+	"properties": {
+	  "fromCustomer":    { "type": "string" },
+	  "toCustomer":      { "type": "string" },
+	  "fromAccount":   	 { "type": "string" },
+	  "toAccount": 		 { "type": "string" },
+	  "amount": 		 { "type": "number", "minimum": 0 },
+	  "transactionDate": { "type": "string", "format": "date-time" }
+	},
+	"required": ["fromCustomer", "toCustomer", "fromAccount", "toAccount", "amount"]
 }
+`
 
 // HelloPubSub consumes a Pub/Sub message.
 func HelloPubSub(ctx context.Context, m PubSubMessage) error {
@@ -47,13 +58,12 @@ func (msg *PubSubMessage) validate() error {
 		return fmt.Errorf("Unmarshal error %s", err)
 	}
 
-	schemaLoader := gojsonschema.NewGoLoader(schemaData)
+	schemaLoader := gojsonschema.NewStringLoader(schemaData)
 	documentLoader := gojsonschema.NewBytesLoader(msg.Data)
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
 		return fmt.Errorf("Schema validation error %s: ", err.Error())
 	}
-
 	if !result.Valid() {
 		return fmt.Errorf("The document is not valid %s", result.Errors())
 	}
