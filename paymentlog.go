@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/xeipuuv/gojsonschema"
@@ -12,10 +13,10 @@ import (
 
 // PubSubMessage represents a Pub/Sub message.
 type PubSubMessage struct {
-	ID   string
 	Data []byte
 }
 
+// schema used to validate the payload
 var schemaData string = `
 {	
 	"$schema": "http://json-schema.org/draft/2019-09/schema#",
@@ -32,16 +33,14 @@ var schemaData string = `
 }
 `
 
-// ProcessLog consumes a Pub/Sub message from Payments Audit Log topic
+// ProcessLog receives PubSub messages from Payments Audit Log topic
 func ProcessLog(ctx context.Context, m PubSubMessage) error {
 	err := m.validate()
 	if err != nil {
-		println("messageId 1731286397516536: %s", err)
 		return err
 	}
 	err = m.save()
 	if err != nil {
-		println("messageId 1731286397516536: %s", err)
 		return err
 	}
 	return nil
@@ -67,15 +66,15 @@ func (msg *PubSubMessage) validate() error {
 }
 
 func (msg *PubSubMessage) save() error {
-	bucketName := os.Getenv("BUCKET")
-
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		return err
 	}
 
-	obj := client.Bucket(bucketName).Object(msg.ID)
+	bucketName := os.Getenv("BUCKET")
+	objName := time.Now().UTC().Format(time.RFC3339) + ".json"
+	obj := client.Bucket(bucketName).Object(objName)
 	wc := obj.NewWriter(ctx)
 	if _, err := wc.Write(msg.Data); err != nil {
 		return err

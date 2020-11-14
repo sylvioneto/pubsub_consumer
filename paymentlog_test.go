@@ -21,7 +21,7 @@ var validMessage string = `
 `
 
 func TestValidate_withInvalidMsg(t *testing.T) {
-	msg := PubSubMessage{ID: "bad", Data: []byte(invalidMessage)}
+	msg := PubSubMessage{Data: []byte(invalidMessage)}
 	err := msg.validate()
 	if err == nil {
 		t.Errorf("Got err=%s; want errors", err)
@@ -29,7 +29,7 @@ func TestValidate_withInvalidMsg(t *testing.T) {
 }
 
 func TestValidate_withValidMsg(t *testing.T) {
-	msg := PubSubMessage{ID: "good", Data: []byte(validMessage)}
+	msg := PubSubMessage{Data: []byte(validMessage)}
 	err := msg.validate()
 	if err != nil {
 		t.Errorf("Got err=%s; want no errors", err)
