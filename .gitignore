@@ -1,3 +1,5 @@
 .vscode
 *.exe
 *.zip
+__debug_bin
+tests.txt

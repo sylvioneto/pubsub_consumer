@@ -52,12 +52,6 @@ func (msg *PubSubMessage) validate() error {
 		return fmt.Errorf("Invalid message")
 	}
 
-	var pMsg PaymentMessage
-	err := json.Unmarshal(msg.Data, &pMsg)
-	if err != nil {
-		return fmt.Errorf("Unmarshal error %s", err)
-	}
-
 	schemaLoader := gojsonschema.NewStringLoader(schemaData)
 	documentLoader := gojsonschema.NewBytesLoader(msg.Data)
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
@@ -69,4 +63,13 @@ func (msg *PubSubMessage) validate() error {
 	}
 
 	return nil
+}
+
+func (msg *PubSubMessage) unmarshall() (PaymentMessage, error) {
+	var pMsg PaymentMessage
+	err := json.Unmarshal(msg.Data, &pMsg)
+	if err != nil {
+		return pMsg, fmt.Errorf("Unmarshal error %s", err)
+	}
+	return pMsg, nil
 }
