@@ -12,6 +12,7 @@
 # below:
 .git
 .gitignore
+*.md
 
 node_modules
 #!include:.gitignore
