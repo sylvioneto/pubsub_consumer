@@ -1,4 +1,4 @@
-package main
+package paymentlog
 
 import (
 	"net/http"
