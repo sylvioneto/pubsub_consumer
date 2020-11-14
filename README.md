@@ -1,4 +1,4 @@
-# pubsub_consumer
+# Pubsub consumer with Cloud Function
 This Cloud Function receives push messages from the PubSub topic `payment-audit-log`.
 It validates the message format, schema, then store valid messages in a GCS bucket for further processing with analytics tools.
 
