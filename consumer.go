@@ -33,13 +33,12 @@ var schemaData string = `
 
 // ProcessLog consumes a Pub/Sub message from Payments Audit Log topic
 func ProcessLog(ctx context.Context, m PubSubMessage) error {
-	name := string(m.Data) // Automatically decoded from base64.
-	msg := PubSubMessage{ID: m.ID, Data: m.Data}
-	err := msg.validate()
+	log.Printf("Received: %s", string(m.Data))
+	err := m.validate()
 	if err != nil {
 		log.Printf("messageId 1731286397516536: %s", err)
 	} else {
-		log.Printf("messageId 1731286397516536: %s", msg.Data)
+		log.Printf("messageId 1731286397516536: %s", m.Data)
 	}
 }
 
