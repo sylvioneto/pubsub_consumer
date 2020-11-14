@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"net/http"
+	"testing"
+)
 
 var invalidMessage string = `
 {
@@ -10,26 +13,42 @@ var invalidMessage string = `
 
 var validMessage string = `
 {
-	"fromCustomer": "a",
-	"fromAccount": "a",
-	"toCustomer": "a",
-	"toAccount": "a",
-	"amount": 0
+	"fromCustomer": "Sylvio",
+	"fromAccount": "0010001",
+	"toCustomer": "Jessica",
+	"toAccount": "0010002",
+	"amount": 10.11
 }
 `
 
-func TestValidateFail(t *testing.T) {
+func TestValidate_withInvalidMsg(t *testing.T) {
 	msg := PubSubMessage{ID: "bad", Data: []byte(invalidMessage)}
 	err := msg.validate()
 	if err == nil {
-        t.Errorf("TestValidateFail err=%s; want Error", err)
+		t.Errorf("err=%s; want Error", err)
 	}
 }
 
-func TestValidateSuccess(t *testing.T) {
+func TestValidate_withValidMsg(t *testing.T) {
 	msg := PubSubMessage{ID: "good", Data: []byte(validMessage)}
 	err := msg.validate()
 	if err != nil {
-        t.Errorf("TestValidateSuccess err=%s; want nil", err)
+		t.Errorf("err=%s; want nil", err)
+	}
+}
+
+func TestProcessLog_withValidMsg(t *testing.T) {
+	msg := PubSubMessage{ID: "good", Data: []byte(validMessage)}
+	httpStatus := ProcessLog(nil, msg)
+	if httpStatus != http.StatusAccepted {
+		t.Errorf("Status=%d; want %d", httpStatus, http.StatusAccepted)
+	}
+}
+
+func TestProcessLog_withInvalidMsg(t *testing.T) {
+	msg := PubSubMessage{ID: "bad", Data: []byte(invalidMessage)}
+	httpStatus := ProcessLog(nil, msg)
+	if httpStatus != http.StatusBadRequest {
+		t.Errorf("Status=%d; want %d", httpStatus, http.StatusBadRequest)
 	}
 }

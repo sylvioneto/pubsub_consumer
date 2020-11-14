@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -33,16 +34,15 @@ var schemaData string = `
 
 // ProcessLog consumes a Pub/Sub message from Payments Audit Log topic
 func ProcessLog(ctx context.Context, m PubSubMessage) int {
-	log.Printf("messageId: %s", string(m.ID))
 	err := m.validate()
 	if err != nil {
 		log.Printf("messageId 1731286397516536: %s", err)
 		return http.StatusBadRequest
 	}
-	return http.StatusOK
+	return http.StatusAccepted
 }
 
-// validate the payload 
+// validate the payload
 func (msg *PubSubMessage) validate() error {
 	if !json.Valid([]byte(msg.Data)) {
 		return fmt.Errorf("Invalid message")
