@@ -65,6 +65,7 @@ func (msg *PubSubMessage) validate() error {
 	return nil
 }
 
+/*
 func (msg *PubSubMessage) unmarshall() (PaymentMessage, error) {
 	var pMsg PaymentMessage
 	err := json.Unmarshal(msg.Data, &pMsg)
@@ -73,3 +74,4 @@ func (msg *PubSubMessage) unmarshall() (PaymentMessage, error) {
 	}
 	return pMsg, nil
 }
+*/
