@@ -49,11 +49,12 @@ func test(projectID string, topicID string) error {
 	received := 0
 	cctx, cancel := context.WithCancel(ctx)
 	err = sub.Receive(cctx, func(ctx context.Context, m *pubsub.Message) {
-		log.Printf("messageId: %s - data: %s", m.ID, m.Data)
 		msg := PubSubMessage{ID: m.ID, Data: m.Data}
 		err := msg.validate()
 		if err != nil {
-			log.Printf("validate: %s", err)
+			log.Printf("messageId 1731286397516536: %s", err)
+		} else {
+			log.Printf("messageId 1731286397516536: %s", msg.Data)
 		}
 		m.Ack()
 		received++

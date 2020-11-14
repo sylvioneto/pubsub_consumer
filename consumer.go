@@ -15,11 +15,6 @@ type PubSubMessage struct {
 	Data []byte
 }
 
-// PaymentMessage represents a payment log message.
-type PaymentMessage struct {
-	Name string `json:"name"`
-}
-
 var schemaData string = `
 {	
 	"$schema": "http://json-schema.org/draft/2019-09/schema#",
@@ -36,14 +31,16 @@ var schemaData string = `
 }
 `
 
-// HelloPubSub consumes a Pub/Sub message.
-func HelloPubSub(ctx context.Context, m PubSubMessage) error {
+// ProcessLog consumes a Pub/Sub message from Payments Audit Log topic
+func ProcessLog(ctx context.Context, m PubSubMessage) error {
 	name := string(m.Data) // Automatically decoded from base64.
-	if name == "" {
-		name = "World"
+	msg := PubSubMessage{ID: m.ID, Data: m.Data}
+	err := msg.validate()
+	if err != nil {
+		log.Printf("messageId 1731286397516536: %s", err)
+	} else {
+		log.Printf("messageId 1731286397516536: %s", msg.Data)
 	}
-	log.Printf("Hello, %s!", name)
-	return nil
 }
 
 func (msg *PubSubMessage) validate() error {
