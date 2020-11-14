@@ -42,8 +42,8 @@ func ProcessLog(ctx context.Context, m PubSubMessage) int {
 	return http.StatusOK
 }
 
+// validate the payload 
 func (msg *PubSubMessage) validate() error {
-	//log.Printf("This message is valid!")
 	if !json.Valid([]byte(msg.Data)) {
 		return fmt.Errorf("Invalid message")
 	}
